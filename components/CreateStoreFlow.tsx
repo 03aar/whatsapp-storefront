@@ -12,11 +12,12 @@ import { createStore } from '../services/supabase';
 interface CreateStoreFlowProps {
   onClose: () => void;
   onStoreCreated: (slug: string) => void;
+  fullPage?: boolean;
 }
 
 type Step = 'details' | 'products' | 'success' | 'loading';
 
-const CreateStoreFlow: React.FC<CreateStoreFlowProps> = ({ onClose, onStoreCreated }) => {
+const CreateStoreFlow: React.FC<CreateStoreFlowProps> = ({ onClose, onStoreCreated, fullPage = false }) => {
   const [step, setStep] = useState<Step>('details');
   const [storeDetails, setStoreDetails] = useState<StoreFormData | null>(null);
   const [createdStoreSlug, setCreatedStoreSlug] = useState('');
@@ -39,7 +40,6 @@ const CreateStoreFlow: React.FC<CreateStoreFlowProps> = ({ onClose, onStoreCreat
     setError(null);
 
     try {
-      // Prepare store data
       const storeData = {
         name: storeDetails.shopName,
         description: storeDetails.shopDescription,
@@ -48,7 +48,6 @@ const CreateStoreFlow: React.FC<CreateStoreFlowProps> = ({ onClose, onStoreCreat
         logoFile: storeDetails.logoFile
       };
 
-      // Prepare products data
       const productsData = products.map(p => ({
         name: p.name,
         description: p.description,
@@ -56,7 +55,6 @@ const CreateStoreFlow: React.FC<CreateStoreFlowProps> = ({ onClose, onStoreCreat
         imageFile: p.imageFile
       }));
 
-      // Create store in Supabase
       const store = await createStore(storeData, productsData);
 
       setCreatedStoreSlug(store.slug);
@@ -73,9 +71,13 @@ const CreateStoreFlow: React.FC<CreateStoreFlowProps> = ({ onClose, onStoreCreat
     onStoreCreated(createdStoreSlug);
   };
 
+  const containerClass = fullPage
+    ? "min-h-screen bg-[#FDFDFD] flex items-center justify-center p-4"
+    : "fixed inset-0 bg-black/50 flex items-center justify-center z-[9999] p-4";
+
   if (step === 'loading') {
     return (
-      <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999] p-4">
+      <div className={containerClass}>
         <div className="clay-card p-12 text-center max-w-md">
           <div className="w-16 h-16 border-4 border-black border-t-transparent rounded-full animate-spin mx-auto mb-6"></div>
           <h3 className="text-2xl font-black uppercase tracking-tighter mb-2">Creating Your Store</h3>
@@ -95,6 +97,7 @@ const CreateStoreFlow: React.FC<CreateStoreFlowProps> = ({ onClose, onStoreCreat
         storeName={createdStoreName}
         onClose={onClose}
         onViewStore={handleViewStore}
+        fullPage={fullPage}
       />
     );
   }
@@ -106,6 +109,7 @@ const CreateStoreFlow: React.FC<CreateStoreFlowProps> = ({ onClose, onStoreCreat
           onNext={handleProductsNext}
           onBack={handleProductsBack}
           currency={storeDetails.currency}
+          fullPage={fullPage}
         />
         {error && (
           <div className="fixed bottom-8 right-8 bg-red-500 text-white px-6 py-4 rounded-xl shadow-2xl max-w-md z-[10000]">
@@ -126,6 +130,7 @@ const CreateStoreFlow: React.FC<CreateStoreFlowProps> = ({ onClose, onStoreCreat
     <StoreDetailsForm
       onNext={handleStoreDetailsNext}
       onCancel={onClose}
+      fullPage={fullPage}
     />
   );
 };

@@ -10,13 +10,15 @@ interface StoreCreatedSuccessProps {
   storeName: string;
   onClose: () => void;
   onViewStore: () => void;
+  fullPage?: boolean;
 }
 
 const StoreCreatedSuccess: React.FC<StoreCreatedSuccessProps> = ({
   storeSlug,
   storeName,
   onClose,
-  onViewStore
+  onViewStore,
+  fullPage = false
 }) => {
   const [copied, setCopied] = useState(false);
 
@@ -36,8 +38,12 @@ const StoreCreatedSuccess: React.FC<StoreCreatedSuccessProps> = ({
     window.open(`https://wa.me/?text=${message}`, '_blank');
   };
 
+  const containerClass = fullPage
+    ? "min-h-screen bg-[#FDFDFD] flex items-center justify-center p-4"
+    : "fixed inset-0 bg-black/50 flex items-center justify-center z-[9999] p-4 overflow-y-auto";
+
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999] p-4 overflow-y-auto">
+    <div className={containerClass}>
       <div className="clay-card w-full max-w-2xl my-8 mx-auto">
         <div className="p-6 md:p-10 text-center">
           {/* Success Icon */}

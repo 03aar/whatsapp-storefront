@@ -18,9 +18,10 @@ interface AddProductsFormProps {
   onNext: (products: ProductFormData[]) => void;
   onBack: () => void;
   currency: string;
+  fullPage?: boolean;
 }
 
-const AddProductsForm: React.FC<AddProductsFormProps> = ({ onNext, onBack, currency }) => {
+const AddProductsForm: React.FC<AddProductsFormProps> = ({ onNext, onBack, currency, fullPage = false }) => {
   const [products, setProducts] = useState<ProductFormData[]>([]);
   const [currentProduct, setCurrentProduct] = useState({
     name: '',
@@ -126,8 +127,12 @@ const AddProductsForm: React.FC<AddProductsFormProps> = ({ onNext, onBack, curre
     onNext(products);
   };
 
+  const containerClass = fullPage
+    ? "min-h-screen bg-[#FDFDFD] flex items-center justify-center p-4"
+    : "fixed inset-0 bg-black/50 flex items-center justify-center z-[9999] p-4 overflow-y-auto";
+
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999] p-4 overflow-y-auto">
+    <div className={containerClass}>
       <div className="clay-card w-full max-w-4xl my-8 mx-auto">
         <div className="p-6 md:p-8 max-h-[90vh] overflow-y-auto">
           {/* Header */}

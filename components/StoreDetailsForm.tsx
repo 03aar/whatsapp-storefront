@@ -8,6 +8,7 @@ import React, { useState } from 'react';
 interface StoreDetailsFormProps {
   onNext: (data: StoreFormData) => void;
   onCancel: () => void;
+  fullPage?: boolean;
 }
 
 export interface StoreFormData {
@@ -19,7 +20,7 @@ export interface StoreFormData {
   logoPreview: string | null;
 }
 
-const StoreDetailsForm: React.FC<StoreDetailsFormProps> = ({ onNext, onCancel }) => {
+const StoreDetailsForm: React.FC<StoreDetailsFormProps> = ({ onNext, onCancel, fullPage = false }) => {
   const [formData, setFormData] = useState<StoreFormData>({
     shopName: '',
     shopDescription: '',
@@ -87,8 +88,12 @@ const StoreDetailsForm: React.FC<StoreDetailsFormProps> = ({ onNext, onCancel })
     }
   };
 
+  const containerClass = fullPage
+    ? "min-h-screen bg-[#FDFDFD] flex items-center justify-center p-4"
+    : "fixed inset-0 bg-black/50 flex items-center justify-center z-[9999] p-4 overflow-y-auto";
+
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999] p-4 overflow-y-auto">
+    <div className={containerClass}>
       <div className="clay-card w-full max-w-2xl my-8 mx-auto">
         <form onSubmit={handleSubmit} className="p-6 md:p-8">
           {/* Header */}
