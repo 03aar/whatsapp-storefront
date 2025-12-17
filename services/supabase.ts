@@ -10,6 +10,13 @@ import { createClient } from '@supabase/supabase-js';
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || 'YOUR_SUPABASE_URL';
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || 'YOUR_SUPABASE_ANON_KEY';
 
+// Debug: Check if env vars are loaded
+console.log('ENV CHECK:', {
+  url: SUPABASE_URL,
+  keyLoaded: SUPABASE_ANON_KEY !== 'YOUR_SUPABASE_ANON_KEY',
+  allEnvVars: import.meta.env
+});
+
 export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // Helper function to upload image to Supabase Storage
