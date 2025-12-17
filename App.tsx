@@ -13,6 +13,8 @@ import CartDrawer from './components/CartDrawer';
 import SettingsView from './components/SettingsView';
 import InfoPage from './components/InfoPage';
 import Inventory from './components/Inventory';
+import CreateStoreFlow from './components/CreateStoreFlow';
+import PublicStorePage from './components/PublicStorePage';
 import { AppView, Product, CartItem, Order, AppSettings } from './types';
 import { MOCK_PRODUCTS, ORDER_STATUSES, BRAND_NAME } from './constants';
 
@@ -22,6 +24,8 @@ const App: React.FC = () => {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [orders, setOrders] = useState<Order[]>([]);
+  const [showCreateStoreFlow, setShowCreateStoreFlow] = useState(false);
+  const [publicStoreSlug, setPublicStoreSlug] = useState<string | null>(null);
   
   // Settings / Store Profile
   const [settings, setSettings] = useState<AppSettings>({
@@ -45,6 +49,16 @@ const App: React.FC = () => {
 
   // Initialization
   useEffect(() => {
+    // Check URL for store slug (e.g., /store/my-shop-slug or #/store/my-shop-slug)
+    const path = window.location.pathname + window.location.hash;
+    const storeMatch = path.match(/\/store\/([a-z0-9-]+)/);
+
+    if (storeMatch) {
+      setPublicStoreSlug(storeMatch[1]);
+      setView('public-store');
+      return;
+    }
+
     // Load local storage or seed
     const savedProducts = localStorage.getItem('shopsmart_products');
     if (savedProducts) {
@@ -70,6 +84,23 @@ const App: React.FC = () => {
   const handleNav = (target: string) => {
     setView(target as AppView);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleOpenCreateStore = () => {
+    setShowCreateStoreFlow(true);
+  };
+
+  const handleCloseCreateStore = () => {
+    setShowCreateStoreFlow(false);
+    setView('landing');
+  };
+
+  const handleStoreCreated = (slug: string) => {
+    setShowCreateStoreFlow(false);
+    setPublicStoreSlug(slug);
+    setView('public-store');
+    // Update URL
+    window.history.pushState({}, '', `/store/${slug}`);
   };
 
   // Cart Logic
@@ -191,7 +222,7 @@ const App: React.FC = () => {
       <main className="flex-grow">
         {view === 'landing' && (
            <div className="animate-fade-in">
-              <Hero onStart={() => handleNav('store')} />
+              <Hero onStart={handleOpenCreateStore} />
               <div className="py-12 md:py-20 bg-black text-white text-center">
                 <h2 className="text-2xl md:text-3xl font-black uppercase tracking-widest mb-8">Sample Storefronts</h2>
                 <div className="flex justify-center gap-4 flex-wrap px-4">
@@ -201,6 +232,10 @@ const App: React.FC = () => {
               </div>
               <Footer onLinkClick={(e, id) => { e.preventDefault(); handleNav(id); }} />
            </div>
+        )}
+
+        {view === 'public-store' && publicStoreSlug && (
+          <PublicStorePage slug={publicStoreSlug} />
         )}
 
         {view === 'store' && (
@@ -301,6 +336,14 @@ const App: React.FC = () => {
              <span className="text-xl">💬</span> <span className="text-xs md:text-sm">Order via WhatsApp</span>
            </button>
         </div>
+      )}
+
+      {/* Create Store Flow Modal */}
+      {showCreateStoreFlow && (
+        <CreateStoreFlow
+          onClose={handleCloseCreateStore}
+          onStoreCreated={handleStoreCreated}
+        />
       )}
     </div>
   );
