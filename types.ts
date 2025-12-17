@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
 */
 
-export type AppView = 'landing' | 'store' | 'dashboard' | 'inventory' | 'settings' | 'privacy' | 'terms';
+export type AppView = 'landing' | 'store' | 'dashboard' | 'inventory' | 'settings' | 'privacy' | 'terms' | 'create-store' | 'public-store';
 
 export interface Product {
   id: string;
