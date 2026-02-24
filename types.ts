@@ -1,12 +1,68 @@
 /**
  * @license
  * SPDX-License-Identifier: Apache-2.0
-*/
+ */
 
-export type AppView = 'landing' | 'store' | 'dashboard' | 'inventory' | 'settings' | 'privacy' | 'terms';
+// ============== VIEWS ==============
+export type AppView =
+  | 'landing'
+  | 'seller-setup'
+  | 'seller-dashboard'
+  | 'seller-products'
+  | 'seller-orders'
+  | 'seller-chat'
+  | 'seller-settings'
+  | 'buyer-home'
+  | 'buyer-store'
+  | 'buyer-chat'
+  | 'buyer-orders';
+
+// ============== USERS ==============
+export interface User {
+  id: string;
+  email: string;
+  password: string;
+  name: string;
+  avatar: string;
+  role: 'seller' | 'buyer';
+  createdAt: number;
+}
+
+// ============== STORE ==============
+export interface StoreSetupAnswers {
+  businessType: 'physical' | 'digital' | 'service' | '';
+  primaryCategory: string;
+  targetAudience: 'general' | 'luxury' | 'budget' | '';
+  shippingType: 'local' | 'national' | 'international' | '';
+  estimatedProducts: '1-10' | '10-50' | '50+' | '';
+}
+
+export interface Store {
+  id: string;
+  sellerId: string;
+  name: string;
+  description: string;
+  logo: string;
+  banner: string;
+  currency: string;
+  categories: string[];
+  isSetupComplete: boolean;
+  setupAnswers: StoreSetupAnswers;
+  rating: number;
+  totalSales: number;
+  createdAt: number;
+}
+
+// ============== PRODUCTS ==============
+export interface ProductVariant {
+  id: string;
+  label: string;
+  priceModifier: number;
+}
 
 export interface Product {
   id: string;
+  storeId: string;
   name: string;
   price: number;
   currency: string;
@@ -14,240 +70,86 @@ export interface Product {
   category: string;
   image: string;
   stock: number;
-  variants?: string[]; // e.g., "Size: M", "Color: Red"
-  isFeatured?: boolean;
-  // Legacy props for UI compatibility with existing cards
-  title?: string;
-  publisher?: string;
-  readTime?: string;
-  upvotes?: number;
-  abstractPreview?: string;
-  aiInsights?: string[];
-  publicationDate?: string;
-  fileUrl?: string; 
-  // Extended fields for Checkout and other components
-  authors?: string[];
-  abstract?: string;
-  doi?: string;
-  whyMatters?: string;
-  publisherLogo?: string;
-  timestamp?: number;
+  variants: ProductVariant[];
+  isActive: boolean;
+  createdAt: number;
 }
 
-// Alias for compatibility with existing components
-export type Paper = Product; 
-
-export interface CartItem extends Product {
-  cartId: string;
-  selectedVariant?: string;
+// ============== CART ==============
+export interface CartItem {
+  productId: string;
+  storeId: string;
+  name: string;
+  price: number;
+  image: string;
   quantity: number;
+  variant?: string;
+}
+
+// ============== ORDERS ==============
+export type OrderStatus = 'pending' | 'confirmed' | 'shipped' | 'delivered' | 'cancelled';
+export type PaymentStatus = 'unpaid' | 'paid' | 'refunded';
+
+export interface OrderItem {
+  productId: string;
+  productName: string;
+  productImage: string;
+  quantity: number;
+  price: number;
+  variant?: string;
 }
 
 export interface Order {
   id: string;
-  customerName: string;
-  customerPhone?: string;
-  items: CartItem[];
+  storeId: string;
+  storeName: string;
+  buyerId: string;
+  buyerName: string;
+  sellerId: string;
+  items: OrderItem[];
   total: number;
-  status: 'new' | 'confirmed' | 'preparing' | 'delivered' | 'cancelled';
-  timestamp: number;
-  method: 'whatsapp';
+  status: OrderStatus;
+  paymentStatus: PaymentStatus;
+  paymentMethod: string;
+  conversationId: string;
+  createdAt: number;
+  updatedAt: number;
 }
 
-export interface StoreProfile {
-  shopName: string;
-  whatsappNumber: string; // e.g., "12125551234"
-  currency: string;
-  logoUrl?: string;
-  description: string;
-  themeColor: string;
-  categories: string[];
+// ============== CONVERSATIONS ==============
+export interface Conversation {
+  id: string;
+  storeId: string;
+  storeName: string;
+  buyerId: string;
+  buyerName: string;
+  sellerId: string;
+  sellerName: string;
+  lastMessage: string;
+  lastMessageAt: number;
+  unreadBuyer: number;
+  unreadSeller: number;
+  orderId?: string;
 }
 
-export interface AutomationRule {
-    id: string;
-    keyword: string;
-    actionType: 'tag' | 'priority' | 'assign';
-    actionValue: string;
-    isActive: boolean;
-}
+export type ChatMessageType = 'text' | 'order_card' | 'payment_request' | 'payment_complete' | 'product_card' | 'system';
 
-export interface AppSettings {
-  language: 'en' | 'es' | 'fr';
-  darkMode: boolean;
-  storeProfile: StoreProfile;
-  // Extended settings
-  slackConnected?: boolean;
-  whatsappConnected?: boolean;
-  crmSync?: {
-      hubspot: boolean;
-      salesforce: boolean;
-  };
-  automationRules?: AutomationRule[];
-}
-
-// Chat / Assistant
 export interface ChatMessage {
-  role: 'user' | 'model';
-  text: string;
-  timestamp: number;
-}
-
-// Journal
-export interface JournalArticle {
   id: string;
-  title: string;
-  date: string;
-  excerpt: string;
+  conversationId: string;
+  senderId: string;
+  senderName: string;
+  senderRole: 'buyer' | 'seller' | 'system';
+  type: ChatMessageType;
   content: string;
-}
-
-// Contact / POS / Customers
-export interface Contact {
-  id: string;
-  name: string;
-  email: string;
-  // Extended fields
-  jobTitle?: string;
-  company?: string;
-  phone?: string;
-  linkedinUrl?: string;
-  address?: string;
-  fax?: string;
-  telex?: string;
-  aiInsights?: string;
-  status?: string;
-  timestamp?: number;
-}
-
-// Integration Logs
-export interface IntegrationLog {
-  id: string;
-  contactId: string;
-  platform: string;
-  message: string;
+  metadata?: Record<string, any>;
   timestamp: number;
+  isRead: boolean;
 }
 
-// File Whisperer
-export interface SummaryRecord {
-  id: string;
-  fileName: string;
-  fileType: string;
-  originalSize: string;
-  title: string;
-  distillation: string;
-  keyPoints: string[];
-  context: string;
-  timestamp: number;
-  shareUrl: string;
-}
-
-// Icon Generator
-export interface IconResult {
-    size: number;
-    label: string;
-    dataUrl: string;
-    type: 'favicon' | 'apple' | 'android' | 'ms';
-}
-
-export interface FaviconSet {
-    id: string;
-    originalFileName: string;
-    icons: IconResult[];
-    htmlSnippet: string;
-    manifestJson: string;
-    timestamp: number;
-}
-
-// Scanner
-export interface ScanRecord {
-    id: string;
-    originalImage: string;
-    processedImage: string;
-    extractedText: string;
-    fileName: string;
-    timestamp: number;
-    status: 'processed';
-}
-
-// Thread Editor
-export interface Tweet {
-    id: string;
-    content: string;
-}
-
-export interface ThreadSet {
-    id: string;
-    originalDump: string;
-    tweets: Tweet[];
-    hookType: string;
-    engagementScore: number;
-    timestamp: number;
-}
-
-// File Importer / Notion
-export interface ConversionRecord {
-    id: string;
-    fileName: string;
-    fileType: string;
-    fileSize: string;
-    notionPageTitle: string;
-    blocks: any[]; 
-    status: string;
-    timestamp: number;
-}
-
-// Support / Inbox / Tickets
-export type TicketStatus = 'open' | 'in-progress' | 'blocked' | 'closed';
-export type TicketSource = 'email' | 'slack' | 'chat_widget' | 'whatsapp';
-export type TicketPriority = 'low' | 'medium' | 'high' | 'urgent';
-export type Sentiment = 'frustrated' | 'neutral' | 'positive' | 'urgent_escalation';
-export type UserRole = 'admin' | 'agent' | 'viewer';
-export type CustomerTier = 'standard' | 'premium' | 'enterprise' | 'vip';
-
-export interface Message {
-    id: string;
-    role: 'agent' | 'customer';
-    author: string;
-    text: string;
-    timestamp: number;
-}
-
-export interface Note {
-    id: string;
-    author: string;
-    text: string;
-    timestamp: number;
-}
-
-export interface Ticket {
-    id: string;
-    subject: string;
-    category: string;
-    source: TicketSource;
-    priority: TicketPriority;
-    status: TicketStatus;
-    sentiment?: Sentiment;
-    customerName: string;
-    customerEmail: string;
-    customerCompany: string;
-    customerTier: CustomerTier;
-    isEscalated: boolean;
-    lastMessageAt: number;
-    summary?: string;
-    aiSuggestedReply?: string;
-    sharedDraft?: string;
-    assignedTo?: string;
-    tags: string[];
-    messages: Message[];
-    notes: Note[];
-}
-
-export interface KBArticle {
-    id: string;
-    title: string;
-    content: string;
-    category: string;
-    timestamp: number;
+// ============== CONTEXT TYPES ==============
+export interface AuthState {
+  user: User | null;
+  isAuthenticated: boolean;
+  isLoading: boolean;
 }

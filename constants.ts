@@ -1,264 +1,319 @@
-
 /**
  * @license
  * SPDX-License-Identifier: Apache-2.0
-*/
+ */
 
-export const BRAND_NAME = 'ShopSmart';
-export const COMPANY_NAME = 'Schroeder Technologies';
-export const DESIGN_STUDIO = 'Gregorious Creative Studios';
+import { User, Store, Product, Conversation, ChatMessage, Order } from './types';
 
+// ============== BRAND ==============
+export const BRAND_NAME = 'ChatMarket';
+export const BRAND_TAGLINE = 'Buy & Sell Through Conversations';
+
+// ============== CATEGORIES ==============
 export const STORE_CATEGORIES = [
-  'All', 'Fashion', 'Electronics', 'Home', 'Beauty', 'Food'
+  'All', 'Fashion', 'Electronics', 'Home', 'Beauty', 'Food', 'Art', 'Books', 'Sports'
 ];
 
 export const ORDER_STATUSES = [
-  { id: 'new', label: 'New Order', color: '#3B82F6' },
-  { id: 'confirmed', label: 'Confirmed', color: '#8B5CF6' },
-  { id: 'preparing', label: 'Packing', color: '#F59E0B' },
-  { id: 'delivered', label: 'Delivered', color: '#10B981' },
-  { id: 'cancelled', label: 'Cancelled', color: '#EF4444' }
+  { id: 'pending', label: 'Pending', color: '#F59E0B', bg: '#FEF3C7' },
+  { id: 'confirmed', label: 'Confirmed', color: '#8B5CF6', bg: '#EDE9FE' },
+  { id: 'shipped', label: 'Shipped', color: '#3B82F6', bg: '#DBEAFE' },
+  { id: 'delivered', label: 'Delivered', color: '#00C897', bg: '#D1FAE5' },
+  { id: 'cancelled', label: 'Cancelled', color: '#EF4444', bg: '#FEE2E2' }
 ];
 
-export const FEATURES = [
-  { 
-    title: 'Instant Storefront', 
-    desc: 'Create a beautiful product catalog in seconds. No coding, no servers, just products.', 
-    icon: '🏪',
-    color: '#6A4FBF'
-  },
-  { 
-    title: 'WhatsApp Checkout', 
-    desc: 'Customers browse online and order directly via WhatsApp message. Direct, personal, fast.', 
-    icon: '💬',
-    color: '#10B981'
-  },
-  { 
-    title: 'Inventory Control', 
-    desc: 'Manage stock, variants, and categories from your phone. Toggle visibility instantly.', 
-    icon: '📦',
-    color: '#F59E0B'
-  },
-  { 
-    title: 'Smart Links', 
-    desc: 'Get a unique URL and QR code for your shop to share on Instagram, TikTok, or business cards.', 
-    icon: '🔗',
-    color: '#EC4899'
-  }
+export const PAYMENT_STATUSES = [
+  { id: 'unpaid', label: 'Unpaid', color: '#EF4444' },
+  { id: 'paid', label: 'Paid', color: '#00C897' },
+  { id: 'refunded', label: 'Refunded', color: '#F59E0B' }
 ];
 
-export const MOCK_PRODUCTS = [
+export const CURRENCY_OPTIONS = [
+  { symbol: '$', label: 'USD', name: 'US Dollar' },
+  { symbol: '€', label: 'EUR', name: 'Euro' },
+  { symbol: '₹', label: 'INR', name: 'Indian Rupee' },
+  { symbol: '£', label: 'GBP', name: 'British Pound' },
+];
+
+export const SETUP_CATEGORIES = [
+  { id: 'fashion', label: 'Fashion', icon: '👗' },
+  { id: 'electronics', label: 'Electronics', icon: '📱' },
+  { id: 'food', label: 'Food & Drink', icon: '🍕' },
+  { id: 'home', label: 'Home & Living', icon: '🏠' },
+  { id: 'beauty', label: 'Beauty', icon: '💄' },
+  { id: 'art', label: 'Art & Craft', icon: '🎨' },
+  { id: 'books', label: 'Books', icon: '📚' },
+  { id: 'sports', label: 'Sports', icon: '⚽' },
+  { id: 'other', label: 'Other', icon: '📦' },
+];
+
+// ============== DEMO SEED DATA ==============
+
+export const DEMO_SELLER: User = {
+  id: 'seller-001',
+  email: 'seller@demo.com',
+  password: 'demo123',
+  name: 'Alex Rivera',
+  avatar: 'A',
+  role: 'seller',
+  createdAt: Date.now() - 86400000 * 30,
+};
+
+export const DEMO_BUYER: User = {
+  id: 'buyer-001',
+  email: 'buyer@demo.com',
+  password: 'demo123',
+  name: 'Sarah Chen',
+  avatar: 'S',
+  role: 'buyer',
+  createdAt: Date.now() - 86400000 * 7,
+};
+
+export const DEMO_STORE: Store = {
+  id: 'store-001',
+  sellerId: 'seller-001',
+  name: 'Sneaker Haven',
+  description: 'Premium sneakers for every style. Curated collection of the best kicks from around the world.',
+  logo: 'S',
+  banner: 'https://images.unsplash.com/photo-1556906781-9a412961c28c?auto=format&fit=crop&q=80&w=1200',
+  currency: '$',
+  categories: ['All', 'High Tops', 'Running', 'Casual', 'Limited Edition'],
+  isSetupComplete: true,
+  setupAnswers: {
+    businessType: 'physical',
+    primaryCategory: 'fashion',
+    targetAudience: 'general',
+    shippingType: 'national',
+    estimatedProducts: '10-50',
+  },
+  rating: 4.8,
+  totalSales: 234,
+  createdAt: Date.now() - 86400000 * 30,
+};
+
+export const DEMO_STORE_2: Store = {
+  id: 'store-002',
+  sellerId: 'seller-002',
+  name: 'Coffee Roast Co.',
+  description: 'Artisanal coffee beans roasted fresh every week. From single-origin to custom blends.',
+  logo: 'C',
+  banner: 'https://images.unsplash.com/photo-1447933601403-56dc2df6e394?auto=format&fit=crop&q=80&w=1200',
+  currency: '$',
+  categories: ['All', 'Single Origin', 'Blends', 'Equipment'],
+  isSetupComplete: true,
+  setupAnswers: {
+    businessType: 'physical',
+    primaryCategory: 'food',
+    targetAudience: 'luxury',
+    shippingType: 'national',
+    estimatedProducts: '10-50',
+  },
+  rating: 4.6,
+  totalSales: 589,
+  createdAt: Date.now() - 86400000 * 60,
+};
+
+export const DEMO_STORE_3: Store = {
+  id: 'store-003',
+  sellerId: 'seller-003',
+  name: 'TechPulse',
+  description: 'Cutting-edge gadgets and accessories. If it has a chip, we have it.',
+  logo: 'T',
+  banner: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=1200',
+  currency: '$',
+  categories: ['All', 'Audio', 'Keyboards', 'Cameras', 'Accessories'],
+  isSetupComplete: true,
+  setupAnswers: {
+    businessType: 'physical',
+    primaryCategory: 'electronics',
+    targetAudience: 'general',
+    shippingType: 'international',
+    estimatedProducts: '50+',
+  },
+  rating: 4.9,
+  totalSales: 1023,
+  createdAt: Date.now() - 86400000 * 90,
+};
+
+export const DEMO_PRODUCTS: Product[] = [
   {
-    id: 'p1',
+    id: 'prod-001',
+    storeId: 'store-001',
     name: 'Retro High Tops',
-    title: 'Retro High Tops',
-    publisher: 'Nike',
     price: 120,
     currency: '$',
-    description: 'Classic vibe sneakers with premium leather finish. Ultra-comfortable sole.',
-    abstractPreview: 'Classic vibe sneakers with premium leather finish. Ultra-comfortable sole.',
-    category: 'Fashion',
+    description: 'Classic vibe sneakers with premium leather finish. Ultra-comfortable sole for all-day wear.',
+    category: 'High Tops',
     image: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&q=80&w=800',
     stock: 12,
-    isFeatured: true,
-    readTime: '$120',
-    upvotes: 12,
-    publicationDate: 'New Arrival',
-    aiInsights: ['Leather', 'Comfort']
+    variants: [],
+    isActive: true,
+    createdAt: Date.now() - 86400000 * 20,
   },
   {
-    id: 'p2',
-    name: 'Analog Watch X',
-    title: 'Analog Watch X',
-    publisher: 'Rolex',
-    price: 250,
+    id: 'prod-002',
+    storeId: 'store-001',
+    name: 'Air Runner Pro',
+    price: 180,
     currency: '$',
-    description: 'Minimalist design for the modern professional. Water resistant up to 50m.',
-    abstractPreview: 'Minimalist design for the modern professional. Water resistant up to 50m.',
-    category: 'Fashion',
-    image: 'https://images.unsplash.com/photo-1524592094714-0f0654e20314?auto=format&fit=crop&q=80&w=800',
-    stock: 5,
-    isFeatured: true,
-    readTime: '$250',
-    upvotes: 5,
-    publicationDate: 'Best Seller',
-    aiInsights: ['Waterproof', 'Minimal']
-  },
-  {
-    id: 'p3',
-    name: 'Ceramic Pour-Over',
-    title: 'Ceramic Pour-Over',
-    publisher: 'HomeGoods',
-    price: 45,
-    currency: '$',
-    description: 'Hand-crafted ceramic coffee maker. Brew the perfect cup every morning.',
-    abstractPreview: 'Hand-crafted ceramic coffee maker. Brew the perfect cup every morning.',
-    category: 'Home',
-    image: 'https://images.unsplash.com/photo-1572196284554-d9c252723702?auto=format&fit=crop&q=80&w=800',
-    stock: 20,
-    readTime: '$45',
-    upvotes: 20,
-    publicationDate: 'Handmade',
-    aiInsights: ['Ceramic', 'Coffee']
-  },
-  {
-    id: 'p4',
-    name: 'Noise-Cancel Buds',
-    title: 'Noise-Cancel Buds',
-    publisher: 'Sony',
-    price: 199,
-    currency: '$',
-    description: 'Silence the world. 24h battery life with charging case.',
-    abstractPreview: 'Silence the world. 24h battery life with charging case.',
-    category: 'Electronics',
-    image: 'https://images.unsplash.com/photo-1590658268037-6bf12165a8df?auto=format&fit=crop&q=80&w=800',
+    description: 'Lightweight running shoes with responsive cushioning. Perfect for marathon training.',
+    category: 'Running',
+    image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&q=80&w=800',
     stock: 8,
-    readTime: '$199',
-    upvotes: 8,
-    publicationDate: 'Tech',
-    aiInsights: ['Wireless', 'Noise Cancel']
+    variants: [],
+    isActive: true,
+    createdAt: Date.now() - 86400000 * 18,
   },
   {
-    id: 'p5',
-    name: 'Organic Face Oil',
-    title: 'Organic Face Oil',
-    publisher: 'Sephora',
-    price: 35,
+    id: 'prod-003',
+    storeId: 'store-001',
+    name: 'Canvas Classic',
+    price: 65,
     currency: '$',
-    description: 'Rejuvenate your skin with 100% natural ingredients.',
-    abstractPreview: 'Rejuvenate your skin with 100% natural ingredients.',
-    category: 'Beauty',
-    image: 'https://images.unsplash.com/photo-1601049541289-9b1b7bbbfe19?auto=format&fit=crop&q=80&w=800',
-    stock: 50,
-    readTime: '$35',
-    upvotes: 50,
-    publicationDate: 'Organic',
-    aiInsights: ['Natural', 'Glow']
+    description: 'Timeless canvas sneakers. Goes with everything from jeans to chinos.',
+    category: 'Casual',
+    image: 'https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?auto=format&fit=crop&q=80&w=800',
+    stock: 25,
+    variants: [],
+    isActive: true,
+    createdAt: Date.now() - 86400000 * 15,
   },
   {
-    id: 'p6',
-    name: 'Vintage Film Camera',
-    title: 'Vintage Film Camera',
-    publisher: 'Canon',
+    id: 'prod-004',
+    storeId: 'store-001',
+    name: 'Limited Gold Edition',
     price: 350,
     currency: '$',
-    description: 'Fully restored 35mm film camera. Perfect for enthusiasts.',
-    abstractPreview: 'Fully restored 35mm film camera.',
-    category: 'Electronics',
-    image: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&q=80&w=800',
-    stock: 2,
-    readTime: '$350',
-    upvotes: 45,
-    publicationDate: 'Vintage',
-    aiInsights: ['Analog', 'Photography']
+    description: 'Only 100 pairs made. Gold-threaded upper with premium box packaging.',
+    category: 'Limited Edition',
+    image: 'https://images.unsplash.com/photo-1460353581641-37baddab0fa2?auto=format&fit=crop&q=80&w=800',
+    stock: 3,
+    variants: [],
+    isActive: true,
+    createdAt: Date.now() - 86400000 * 5,
   },
   {
-    id: 'p7',
-    name: 'Designer Lounge Chair',
-    title: 'Designer Lounge Chair',
-    publisher: 'Herman Miller',
-    price: 899,
+    id: 'prod-005',
+    storeId: 'store-001',
+    name: 'Street Walker',
+    price: 95,
     currency: '$',
-    description: 'Mid-century modern replica. Genuine leather and wood.',
-    abstractPreview: 'Mid-century modern replica.',
-    category: 'Home',
-    image: 'https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?auto=format&fit=crop&q=80&w=800',
-    stock: 4,
-    readTime: '$899',
-    upvotes: 110,
-    publicationDate: 'Furniture',
-    aiInsights: ['Design', 'Comfort']
+    description: 'Urban style meets comfort. Padded ankle collar and grippy outsole.',
+    category: 'Casual',
+    image: 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&q=80&w=800',
+    stock: 18,
+    variants: [],
+    isActive: true,
+    createdAt: Date.now() - 86400000 * 10,
   },
   {
-    id: 'p8',
-    name: 'Mechanical Keyboard',
-    title: 'Mechanical Keyboard',
-    publisher: 'Keychron',
-    price: 120,
+    id: 'prod-006',
+    storeId: 'store-001',
+    name: 'Trail Blazer X',
+    price: 145,
     currency: '$',
-    description: 'Wireless mechanical keyboard with RGB backlighting and brown switches.',
-    abstractPreview: 'Wireless mechanical keyboard with RGB.',
-    category: 'Electronics',
-    image: 'https://images.unsplash.com/photo-1595225476474-87563907a212?auto=format&fit=crop&q=80&w=800',
+    description: 'All-terrain trail running shoes. Waterproof membrane with aggressive tread pattern.',
+    category: 'Running',
+    image: 'https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?auto=format&fit=crop&q=80&w=800',
+    stock: 7,
+    variants: [],
+    isActive: true,
+    createdAt: Date.now() - 86400000 * 8,
+  },
+  // Store 2 products
+  {
+    id: 'prod-101',
+    storeId: 'store-002',
+    name: 'Ethiopian Yirgacheffe',
+    price: 24,
+    currency: '$',
+    description: 'Bright, fruity, and wine-like. Single-origin from the birthplace of coffee.',
+    category: 'Single Origin',
+    image: 'https://images.unsplash.com/photo-1559056199-641a0ac8b55e?auto=format&fit=crop&q=80&w=800',
+    stock: 40,
+    variants: [],
+    isActive: true,
+    createdAt: Date.now() - 86400000 * 25,
+  },
+  {
+    id: 'prod-102',
+    storeId: 'store-002',
+    name: 'House Blend',
+    price: 18,
+    currency: '$',
+    description: 'Our signature blend. Smooth, chocolatey, with a hint of caramel. Perfect everyday coffee.',
+    category: 'Blends',
+    image: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefda?auto=format&fit=crop&q=80&w=800',
+    stock: 60,
+    variants: [],
+    isActive: true,
+    createdAt: Date.now() - 86400000 * 30,
+  },
+  {
+    id: 'prod-103',
+    storeId: 'store-002',
+    name: 'Ceramic Pour-Over Set',
+    price: 45,
+    currency: '$',
+    description: 'Hand-crafted ceramic dripper with carafe. The perfect manual brewing setup.',
+    category: 'Equipment',
+    image: 'https://images.unsplash.com/photo-1572196284554-d9c252723702?auto=format&fit=crop&q=80&w=800',
     stock: 15,
-    readTime: '$120',
-    upvotes: 200,
-    publicationDate: 'Tech',
-    aiInsights: ['Tactile', 'RGB']
+    variants: [],
+    isActive: true,
+    createdAt: Date.now() - 86400000 * 20,
+  },
+  // Store 3 products
+  {
+    id: 'prod-201',
+    storeId: 'store-003',
+    name: 'Noise-Cancel Buds Pro',
+    price: 199,
+    currency: '$',
+    description: 'Silence the world. 24h battery life with ANC and transparency mode.',
+    category: 'Audio',
+    image: 'https://images.unsplash.com/photo-1590658268037-6bf12165a8df?auto=format&fit=crop&q=80&w=800',
+    stock: 22,
+    variants: [],
+    isActive: true,
+    createdAt: Date.now() - 86400000 * 15,
   },
   {
-    id: 'p9',
-    name: 'Succulent Trio',
-    title: 'Succulent Trio',
-    publisher: 'GreenThumb',
-    price: 25,
+    id: 'prod-202',
+    storeId: 'store-003',
+    name: 'Mechanical Keyboard K75',
+    price: 129,
     currency: '$',
-    description: 'Three low-maintenance succulents in ceramic pots.',
-    abstractPreview: 'Three low-maintenance succulents.',
-    category: 'Home',
-    image: 'https://images.unsplash.com/photo-1485955900006-10f4d324d411?auto=format&fit=crop&q=80&w=800',
-    stock: 30,
-    readTime: '$25',
-    upvotes: 85,
-    publicationDate: 'Plants',
-    aiInsights: ['Green', 'Decor']
+    description: 'Wireless mechanical keyboard with RGB and hot-swappable switches.',
+    category: 'Keyboards',
+    image: 'https://images.unsplash.com/photo-1595225476474-87563907a212?auto=format&fit=crop&q=80&w=800',
+    stock: 14,
+    variants: [],
+    isActive: true,
+    createdAt: Date.now() - 86400000 * 12,
   },
   {
-    id: 'p10',
-    name: 'Leather Wallet',
-    title: 'Leather Wallet',
-    publisher: 'Bellroy',
-    price: 75,
+    id: 'prod-203',
+    storeId: 'store-003',
+    name: 'Vintage Film Camera',
+    price: 350,
     currency: '$',
-    description: 'Slim bifold wallet made from vegetable-tanned leather.',
-    abstractPreview: 'Slim bifold wallet.',
-    category: 'Fashion',
-    image: 'https://images.unsplash.com/photo-1627123424574-18bd75f3194c?auto=format&fit=crop&q=80&w=800',
-    stock: 25,
-    readTime: '$75',
-    upvotes: 60,
-    publicationDate: 'Accessories',
-    aiInsights: ['Leather', 'Slim']
-  }
+    description: 'Fully restored 35mm film camera. Perfect for analog photography enthusiasts.',
+    category: 'Cameras',
+    image: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&q=80&w=800',
+    stock: 4,
+    variants: [],
+    isActive: true,
+    createdAt: Date.now() - 86400000 * 10,
+  },
 ];
 
-export const getPublisherInfo = (publisher: string = 'Default') => {
-    return { color: '#000000', logo: publisher.charAt(0) };
-};
+// Pre-seeded conversation for demo
+export const DEMO_CONVERSATIONS: Conversation[] = [];
+export const DEMO_MESSAGES: ChatMessage[] = [];
+export const DEMO_ORDERS: Order[] = [];
 
-// Legacy constants
-export const GLOSSARY: Record<string, string> = {};
-export const JOURNAL_ARTICLES: any[] = [];
-
-export const INDUSTRIES = [
-    { name: 'Finance', icon: '💰' },
-    { name: 'Tech', icon: '💻' },
-    { name: 'Health', icon: '🏥' },
-    { name: 'Retail', icon: '🛍️' }
-];
-
-export const FAVICON_SIZES = [16, 32, 96];
-export const APPLE_SIZES = [57, 60, 72, 76, 114, 120, 144, 152, 180];
-export const ANDROID_SIZES = [192, 512];
-export const MS_SIZES = [70, 144, 150, 310];
-
-export const THREAD_TONES = [
-    { id: 'educational', name: 'Educational' },
-    { id: 'contrarian', name: 'Contrarian' },
-    { id: 'storytelling', name: 'Storytelling' },
-    { id: 'analytical', name: 'Analytical' }
-];
-
-export const SOURCE_ICONS: Record<string, string> = {
-    email: '✉️',
-    slack: '💬',
-    chat_widget: '🌐',
-    whatsapp: '📱'
-};
-
-export const CUSTOMER_TIERS: Record<string, { color: string }> = {
-    standard: { color: 'border-gray-300 text-gray-500' },
-    premium: { color: 'border-blue-500 text-blue-500' },
-    enterprise: { color: 'border-purple-500 text-purple-500' },
-    vip: { color: 'border-yellow-500 text-yellow-500' }
+// Helper to generate unique IDs
+export const generateId = (prefix: string = '') => {
+  return `${prefix}${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
 };
